@@ -1,264 +1,270 @@
 <!DOCTYPE html>
-
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HOÀNG GIA COMPUTER</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07090d">
+  <title>Quản lý nội bộ</title>
 
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Segoe UI',sans-serif;
-}
+  <style>
+    :root{
+      --bg:#07090d;
+      --panel:#10141c;
+      --panel-2:#151b25;
+      --text:#f6f7fb;
+      --muted:#8f98aa;
+      --line:rgba(255,255,255,.08);
+      --red:#ff3b46;
+      --red-soft:rgba(255,59,70,.14);
+      --green:#29d391;
+      --green-soft:rgba(41,211,145,.14);
+      --blue:#4a8dff;
+      --blue-soft:rgba(74,141,255,.14);
+      --shadow:0 18px 50px rgba(0,0,0,.36);
+    }
 
-body{
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-overflow:hidden;
-background:#050505;
-}
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 
-/* Nền động */
-body::before{
-content:"";
-position:fixed;
-inset:-50%;
-background:
-radial-gradient(circle,#ff000040 0%,transparent 25%),
-radial-gradient(circle,#0080ff30 0%,transparent 25%);
-background-size:500px 500px;
-animation:bgMove 15s linear infinite;
-pointer-events:none;
-}
+    html{background:var(--bg);color-scheme:dark}
 
-@keyframes bgMove{
-from{transform:rotate(0deg);}
-to{transform:rotate(360deg);}
-}
+    body{
+      min-height:100vh;
+      min-height:100dvh;
+      font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 12% 0%,rgba(255,59,70,.17),transparent 28%),
+        radial-gradient(circle at 100% 22%,rgba(74,141,255,.13),transparent 30%),
+        var(--bg);
+      padding:max(12px,env(safe-area-inset-top)) 16px max(26px,env(safe-area-inset-bottom));
+    }
 
-.container{
-position:relative;
-z-index:2;
-width:95%;
-max-width:500px;
-}
+    a{color:inherit}
+    .app{width:100%;max-width:560px;margin:0 auto}
 
-.logo{
-text-align:center;
-margin-bottom:25px;
-}
+    .section-card,.warehouse-card{
+      margin-top:14px;
+      overflow:hidden;
+      border:1px solid var(--line);
+      border-radius:24px;
+      background:linear-gradient(180deg,rgba(255,255,255,.025),transparent 28%),var(--panel);
+      box-shadow:var(--shadow);
+    }
 
-.logo h1{
-font-size:50px;
-color:#fff;
-text-shadow:
-0 0 10px #ff0000,
-0 0 25px #ff0000,
-0 0 50px #ff0000;
-animation:pulse 2s infinite alternate;
-}
+    .section-card:first-child{margin-top:0}
 
-.logo p{
-margin-top:10px;
-color:#bbb;
-letter-spacing:2px;
-}
+    .section-main{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      min-height:132px;
+      padding:22px 18px 20px;
+      text-align:center;
+    }
 
-@keyframes pulse{
-from{
-text-shadow:
-0 0 10px #ff0000,
-0 0 25px #ff0000;
-}
-to{
-text-shadow:
-0 0 20px #ff0000,
-0 0 40px #ff0000,
-0 0 80px #ff0000;
-}
-}
+    .section-icon,.warehouse-icon{
+      width:52px;height:52px;display:grid;place-items:center;border-radius:17px
+    }
+    .section-icon svg,.warehouse-icon svg{width:25px;height:25px}
+    .attendance .section-icon{color:var(--red);background:var(--red-soft)}
+    .cash .section-icon{color:var(--green);background:var(--green-soft)}
+    .warehouse-icon{color:var(--blue);background:var(--blue-soft)}
 
-.panel{
-background:rgba(20,20,20,.7);
-backdrop-filter:blur(15px);
-border:1px solid rgba(255,255,255,.08);
-border-radius:25px;
-padding:20px;
-box-shadow:0 0 20px rgba(255,0,0,.15);
-}
+    .section-text strong,.warehouse-link strong{display:block;font-size:18px;letter-spacing:.2px}
+    .section-text span,.warehouse-link span{
+      display:block;margin-top:6px;color:var(--muted);font-size:12px;line-height:1.4
+    }
 
-/* MENU */
-.btn{
-display:flex;
-align-items:center;
-justify-content:center;
-height:72px;
-margin:15px 0;
-border-radius:18px;
-text-decoration:none;
-color:#fff;
-font-size:20px;
-font-weight:700;
-background:linear-gradient(135deg,#1a1a1a,#2b2b2b);
-border:1px solid #444;
-position:relative;
-overflow:hidden;
-transition:.25s;
-animation:breathe 3s infinite;
-}
+    .month-area{border-top:1px solid var(--line);padding:14px 0 16px}
+    .month-label{
+      padding:0 18px 10px;color:#a8b0bf;font-size:11px;font-weight:800;
+      letter-spacing:.9px;text-transform:uppercase
+    }
+    .month-scroll{
+      display:flex;gap:9px;overflow-x:auto;padding:0 18px 4px;
+      scroll-snap-type:x proximity;scrollbar-width:none;overscroll-behavior-x:contain
+    }
+    .month-scroll::-webkit-scrollbar{display:none}
+    .month-link{
+      flex:0 0 auto;scroll-snap-align:start;min-width:112px;padding:12px 14px;
+      border:1px solid var(--line);border-radius:14px;background:var(--panel-2);
+      color:#e9edf5;text-align:center;text-decoration:none;font-size:13px;font-weight:750;
+      white-space:nowrap;transition:transform .16s ease,border-color .16s ease,background .16s ease
+    }
+    .month-link:active{transform:scale(.97)}
+    .attendance .month-link:hover{border-color:rgba(255,59,70,.45);background:var(--red-soft)}
+    .cash .month-link:hover{border-color:rgba(41,211,145,.42);background:var(--green-soft)}
+    .month-link.disabled{opacity:.48;cursor:default;pointer-events:none;filter:saturate(.35)}
 
-/* Quét trắng nhẹ liên tục */
-.btn::after{
-content:"";
-position:absolute;
-top:0;
-left:-150%;
-width:60%;
-height:100%;
-transform:skewX(-25deg);
-background:linear-gradient(
-90deg,
-transparent,
-rgba(255,255,255,.08),
-rgba(255,255,255,.30),
-rgba(255,255,255,.08),
-transparent
-);
-animation:shine 4s infinite;
-pointer-events:none;
-}
+    .warehouse-link{
+      min-height:140px;padding:22px 18px;text-decoration:none;display:flex;
+      flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;
+      transition:transform .16s ease,background .16s ease
+    }
+    .warehouse-link:active{transform:scale(.98);background:rgba(74,141,255,.05)}
 
-/* Quét đỏ khi hover */
-.btn::before{
-content:"";
-position:absolute;
-top:0;
-left:-180%;
-width:90px;
-height:100%;
-transform:skewX(-25deg);
-background:linear-gradient(
-90deg,
-transparent,
-rgba(255,0,0,.8),
-rgba(255,120,120,1),
-rgba(255,0,0,.8),
-transparent
-);
-opacity:0;
-pointer-events:none;
-}
+    .footer{
+      margin-top:24px;text-align:center;font-size:11px;font-weight:600;letter-spacing:.6px;
+      color:#9aa4b5;opacity:1;
+      -webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.12) 12%,rgba(0,0,0,.55) 25%,#000 42%,#000 58%,rgba(0,0,0,.55) 75%,rgba(0,0,0,.12) 88%,transparent 100%);
+      mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.12) 12%,rgba(0,0,0,.55) 25%,#000 42%,#000 58%,rgba(0,0,0,.55) 75%,rgba(0,0,0,.12) 88%,transparent 100%);
+      -webkit-mask-size:220% 100%;mask-size:220% 100%;
+      animation:footerScan 3.2s linear infinite,footerBlink 3.2s ease-in-out infinite
+    }
+    @keyframes footerScan{
+      0%{-webkit-mask-position:180% 0;mask-position:180% 0}
+      100%{-webkit-mask-position:-80% 0;mask-position:-80% 0}
+    }
+    @keyframes footerBlink{
+      0%,8%{opacity:0}18%{opacity:.25}38%{opacity:.65}50%{opacity:1}
+      68%{opacity:.55}84%{opacity:.18}92%,100%{opacity:0}
+    }
 
-.btn:hover::before{
-opacity:1;
-animation:hoverShine .6s ease-out;
-}
-
-@keyframes hoverShine{
-0%{
-left:-180%;
-}
-100%{
-left:180%;
-}
-}
-
-@keyframes shine{
-0%{
-left:-150%;
-}
-35%{
-left:150%;
-}
-100%{
-left:150%;
-}
-}
-
-@keyframes breathe{
-0%{
-box-shadow:0 0 5px rgba(255,0,0,.15);
-}
-50%{
-box-shadow:0 0 18px rgba(255,0,0,.30);
-}
-100%{
-box-shadow:0 0 5px rgba(255,0,0,.15);
-}
-}
-
-.btn:hover{
-transform:translateY(-3px) scale(1.02);
-box-shadow:
-0 0 20px #ff0000,
-0 0 40px #ff0000,
-0 0 70px #ff0000;
-border-color:#ff4444;
-}
-
-.footer{
-margin-top:20px;
-text-align:center;
-font-size:13px;
-color:#777;
-letter-spacing:1px;
-}
-
-@media(max-width:600px){
-
-.logo h1{
-font-size:42px;
-}
-
-.btn{
-height:68px;
-font-size:18px;
-}
-
-}
-</style>
-
+    @media (min-width:700px){
+      body{padding-top:24px;padding-bottom:42px}
+      .app{max-width:620px}
+      .warehouse-link:hover{background:rgba(74,141,255,.05)}
+    }
+    @media (max-width:360px){
+      body{padding-left:12px;padding-right:12px}
+      .month-link{min-width:106px}
+    }
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+    }
+  </style>
 </head>
-
 <body>
+  <main class="app">
+    <section class="section-card attendance">
+      <div class="section-main">
+        <div class="section-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+            <rect x="4" y="3" width="16" height="18" rx="3"/>
+            <path d="M8 2v4M16 2v4M4 9h16M8 13h3M8 17h6"/>
+          </svg>
+        </div>
+        <div class="section-text">
+          <strong>BẢNG CHẤM CÔNG</strong>
+          <span>Mở bảng tổng hợp chấm công hiện tại</span>
+        </div>
+      </div>
+      <div class="month-area">
+        <div class="month-label">Chọn kỳ chấm công</div>
+        <div class="month-scroll">
+          <a class="month-link" data-url-key="CHAM_CONG_01_07_2026">01/07/2026</a>
+          <a class="month-link" data-url-key="CHAM_CONG_01_08_2026">01/08/2026</a>
+          <a class="month-link" data-url-key="CHAM_CONG_01_09_2026">01/09/2026</a>
+          <a class="month-link" data-url-key="CHAM_CONG_01_10_2026">01/10/2026</a>
+          <a class="month-link" data-url-key="CHAM_CONG_01_11_2026">01/11/2026</a>
+          <a class="month-link" data-url-key="CHAM_CONG_01_12_2026">01/12/2026</a>
+        </div>
+      </div>
+    </section>
 
-<div class="container">
+    <section class="section-card cash">
+      <div class="section-main">
+        <div class="section-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+            <rect x="3" y="5" width="18" height="14" rx="3"/>
+            <path d="M7 9h.01M17 15h.01"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </div>
+        <div class="section-text">
+          <strong>TIỀN MẶT</strong>
+          <span>Mở bảng theo dõi thu chi và tiền mặt</span>
+        </div>
+      </div>
+      <div class="month-area">
+        <div class="month-label">Chọn kỳ tiền mặt</div>
+        <div class="month-scroll">
+          <a class="month-link" data-url-key="TIEN_MAT_01_07_2026">01/07/2026</a>
+          <a class="month-link" data-url-key="TIEN_MAT_01_08_2026">01/08/2026</a>
+          <a class="month-link" data-url-key="TIEN_MAT_01_09_2026">01/09/2026</a>
+          <a class="month-link" data-url-key="TIEN_MAT_01_10_2026">01/10/2026</a>
+          <a class="month-link" data-url-key="TIEN_MAT_01_11_2026">01/11/2026</a>
+          <a class="month-link" data-url-key="TIEN_MAT_01_12_2026">01/12/2026</a>
+        </div>
+      </div>
+    </section>
 
-<div class="logo">
-<h1>HGCP</h1>
-<p>www.maytinhhoangia.vn</p>
-</div>
+    <section class="warehouse-card">
+      <a class="warehouse-link" href="https://khoq2.github.io/">
+        <div class="warehouse-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+            <path d="M3 10 12 4l9 6v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <path d="M8 21v-7h8v7M8 10h.01M16 10h.01"/>
+          </svg>
+        </div>
+        <div><strong>KHO QUẬN 2</strong><span>Mở hệ thống quản lý kho</span></div>
+      </a>
+    </section>
 
-<div class="panel">
+    <footer class="footer">· Design by : Pham Van Chuong · © 2026</footer>
+  </main>
 
-<a class="btn" href="https://docs.google.com/spreadsheets/d/1w1QXOhkaxXVktWi5Prrel8blfGkH0f20zJVp3JTyRcg/edit?usp=sharing">
-📋 BẢNG CHẤM CÔNG
-</a>
+  <script>
+    /* =========================================================
+       LINK BẢNG CHẤM CÔNG
+       Dán link vào giữa hai dấu ngoặc kép của đúng kỳ.
+       Ví dụ:
+       const CHAM_CONG_01_07_2026 = "https://docs.google.com/...";
+       ========================================================= */
 
-<a class="btn" href="https://docs.google.com/spreadsheets/d/1DwRZ6SCnyrH4VN8f4aM5qRq9hU2qfW_PJFEFZPRu0J4/edit?usp=sharing">
-💵 TIỀN MẶT
-</a>
+    const CHAM_CONG_01_07_2026 = ""; // LINK URL BẢNG CHẤM CÔNG 01/07/2026
+    const CHAM_CONG_01_08_2026 = ""; // LINK URL BẢNG CHẤM CÔNG 01/08/2026
+    const CHAM_CONG_01_09_2026 = ""; // LINK URL BẢNG CHẤM CÔNG 01/09/2026
+    const CHAM_CONG_01_10_2026 = ""; // LINK URL BẢNG CHẤM CÔNG 01/10/2026
+    const CHAM_CONG_01_11_2026 = ""; // LINK URL BẢNG CHẤM CÔNG 01/11/2026
+    const CHAM_CONG_01_12_2026 = ""; // LINK URL BẢNG CHẤM CÔNG 01/12/2026
 
-<a class="btn" href="https://khoq2.github.io/">
-📦 KHO QUẬN 2
-</a>
+    /* =========================================================
+       LINK TIỀN MẶT
+       Dán link vào giữa hai dấu ngoặc kép của đúng kỳ.
+       Ví dụ:
+       const TIEN_MAT_01_07_2026 = "https://docs.google.com/...";
+       ========================================================= */
 
-<a class="btn" href="#">
-📦 KHO QUẬN 5
-</a>
+    const TIEN_MAT_01_07_2026 = ""; // LINK URL TIỀN MẶT 01/07/2026
+    const TIEN_MAT_01_08_2026 = ""; // LINK URL TIỀN MẶT 01/08/2026
+    const TIEN_MAT_01_09_2026 = ""; // LINK URL TIỀN MẶT 01/09/2026
+    const TIEN_MAT_01_10_2026 = ""; // LINK URL TIỀN MẶT 01/10/2026
+    const TIEN_MAT_01_11_2026 = ""; // LINK URL TIỀN MẶT 01/11/2026
+    const TIEN_MAT_01_12_2026 = ""; // LINK URL TIỀN MẶT 01/12/2026
 
-</div>
+    const URLS = {
+      CHAM_CONG_01_07_2026,
+      CHAM_CONG_01_08_2026,
+      CHAM_CONG_01_09_2026,
+      CHAM_CONG_01_10_2026,
+      CHAM_CONG_01_11_2026,
+      CHAM_CONG_01_12_2026,
+      TIEN_MAT_01_07_2026,
+      TIEN_MAT_01_08_2026,
+      TIEN_MAT_01_09_2026,
+      TIEN_MAT_01_10_2026,
+      TIEN_MAT_01_11_2026,
+      TIEN_MAT_01_12_2026
+    };
 
-<div class="footer">
-Design by: Phạm Văn Chương
-</div>
+    document.querySelectorAll(".month-link[data-url-key]").forEach((button) => {
+      const url = (URLS[button.dataset.urlKey] || "").trim();
 
-</div>
-
+      if (url) {
+        button.href = url;
+        button.target = "_blank";
+        button.rel = "noopener noreferrer";
+        button.classList.remove("disabled");
+        button.removeAttribute("aria-disabled");
+      } else {
+        button.removeAttribute("href");
+        button.classList.add("disabled");
+        button.setAttribute("aria-disabled", "true");
+      }
+    });
+  </script>
 </body>
 </html>
