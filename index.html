@@ -1225,10 +1225,28 @@
       }, 1000);
     })();
 
-    /* =========================================================
-       LINK BẢNG CHẤM CÔNG
-       Chỉ cần dán link mới vào giữa hai dấu ngoặc kép.
-       ========================================================= */
+    /* ======================================================================
+       🔎 DÁN LINK THÁNG MỚI TẠI ĐÂY
+
+       CÁCH LÀM CHO NHỮNG LẦN SAU:
+       1. Nhấn Ctrl + F và tìm: DÁN LINK THÁNG MỚI TẠI ĐÂY
+       2. Tìm đúng tháng và đúng loại file: CHAM_CONG hoặc TIEN_MAT.
+       3. Dán link Google Sheets vào giữa hai dấu ngoặc kép "...".
+       4. Lưu file HTML rồi tải lại trang.
+
+       VÍ DỤ:
+       const CHAM_CONG_01_10_2026 = "LINK BCC THÁNG 10";
+       const TIEN_MAT_01_10_2026 = "LINK TIỀN MẶT THÁNG 10";
+
+       Trang sẽ TỰ ĐỘNG:
+       - Chọn tháng mới nhất có link làm "Tháng hiện tại".
+       - Bật nút mở file của tháng đó.
+       - Chuyển các tháng cũ xuống danh sách lịch sử.
+
+       LƯU Ý: Không cần sửa class="disabled", tiêu đề hoặc JavaScript khác.
+       ====================================================================== */
+
+    /* ====================== LINK BẢNG CHẤM CÔNG (BCC) ====================== */
     const CHAM_CONG_01_07_2026 = "https://docs.google.com/spreadsheets/d/1w1QXOhkaxXVktWi5Prrel8blfGkH0f20zJVp3JTyRcg/edit?usp=sharing";
     const CHAM_CONG_01_08_2026 = "https://docs.google.com/spreadsheets/d/1MBUdWsDXPQM0xjPXbkXHQ310U8aAGctiaxGQUepr7J4/edit?usp=sharing";
     const CHAM_CONG_01_09_2026 = "https://docs.google.com/spreadsheets/d/1F3RYUFUXHodLsLFmuy65FlmRESqSSetiWLQH5uB12j4/edit?usp=drive_link";
@@ -1236,10 +1254,7 @@
     const CHAM_CONG_01_11_2026 = "";
     const CHAM_CONG_01_12_2026 = "";
 
-    /* =========================================================
-       LINK TIỀN MẶT
-       Chỉ cần dán link mới vào giữa hai dấu ngoặc kép.
-       ========================================================= */
+    /* =========================== LINK TIỀN MẶT ============================ */
     const TIEN_MAT_01_07_2026 = "https://docs.google.com/spreadsheets/d/1DwRZ6SCnyrH4VN8f4aM5qRq9hU2qfW_PJFEFZPRu0J4/edit?usp=drive_link";
     const TIEN_MAT_01_08_2026 = "https://docs.google.com/spreadsheets/d/1IL7Kb4K2hWlClvzh6p4zoq1b4NeFVwfCBhpRLwKItVU/edit?usp=sharing";
     const TIEN_MAT_01_09_2026 = "https://docs.google.com/spreadsheets/d/1mD13QIPlh0epd9CFKfRq2IMtjb84RCyzaWLSxQwV5CI/edit?usp=sharing";
