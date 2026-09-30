@@ -938,6 +938,12 @@
       }
     }
 
+    .page-hidden *,
+    .page-hidden *::before,
+    .page-hidden *::after {
+      animation-play-state: paused !important;
+    }
+
     :focus-visible {
       outline: 2px solid var(--blue);
       outline-offset: 3px;
@@ -1041,6 +1047,10 @@
       let pixelRatio = 1;
       let particles = [];
       let previousFrame = 0;
+      let frameId = 0;
+      let resizeFrame = 0;
+      let started = false;
+      const glowCache = new Map();
 
       function createParticle() {
         const color = colors[Math.floor(Math.random() * colors.length)];
@@ -1060,29 +1070,39 @@
       function resizeCanvas() {
         width = window.innerWidth;
         height = window.innerHeight;
-        pixelRatio = Math.min(window.devicePixelRatio || 1, 1.4);
+        pixelRatio = Math.min(window.devicePixelRatio || 1, 1);
         canvas.width = Math.round(width * pixelRatio);
         canvas.height = Math.round(height * pixelRatio);
         context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
 
         const mobile = width < 600;
         const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        const particleCount = reducedMotion ? 16 : mobile ? 28 : 46;
+        const particleCount = reducedMotion ? 12 : mobile ? 22 : 34;
         particles = Array.from({ length: particleCount }, createParticle);
       }
 
+      // Vẽ quầng sáng một lần rồi tái sử dụng, tránh tạo gradient lớn mỗi khung hình.
       function addMovingGlow(x, y, radius, color) {
-        const glow = context.createRadialGradient(x, y, 0, x, y, radius);
-        glow.addColorStop(0, color);
-        glow.addColorStop(1, "rgba(0,0,0,0)");
-        context.fillStyle = glow;
-        context.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+        let sprite = glowCache.get(color);
+        if (!sprite) {
+          sprite = document.createElement("canvas");
+          sprite.width = sprite.height = 256;
+          const brush = sprite.getContext("2d");
+          const glow = brush.createRadialGradient(128, 128, 0, 128, 128, 128);
+          glow.addColorStop(0, color);
+          glow.addColorStop(1, "rgba(0,0,0,0)");
+          brush.fillStyle = glow;
+          brush.fillRect(0, 0, 256, 256);
+          glowCache.set(color, sprite);
+        }
+        context.drawImage(sprite, x - radius, y - radius, radius * 2, radius * 2);
       }
 
       function drawFrame(time) {
-        requestAnimationFrame(drawFrame);
+        if (document.hidden) { frameId = 0; return; }
+        frameId = requestAnimationFrame(drawFrame);
 
-        const frameDelay = width < 600 ? 40 : 30;
+        const frameDelay = 1000 / 30;
         if (time - previousFrame < frameDelay) return;
         const step = Math.min((time - previousFrame) / 16.67, 2.2);
         previousFrame = time;
@@ -1145,9 +1165,10 @@
             const other = particles[j];
             const dx = particle.x - other.x;
             const dy = particle.y - other.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+            const distanceSquared = dx * dx + dy * dy;
 
-            if (distance < 105) {
+            if (distanceSquared < 11025) {
+              const distance = Math.sqrt(distanceSquared);
               const opacity = (1 - distance / 105) * .27;
               context.strokeStyle = `rgba(115,155,255,${opacity})`;
               context.lineWidth = .65;
@@ -1165,7 +1186,11 @@
         }
       }
 
-      window.addEventListener("resize", resizeCanvas, { passive: true });
+      window.addEventListener("resize", () => {
+        if (!started) return;
+        cancelAnimationFrame(resizeFrame);
+        resizeFrame = requestAnimationFrame(resizeCanvas);
+      }, { passive: true });
       window.addEventListener("pointermove", (event) => {
         pointer.x = event.clientX;
         pointer.y = event.clientY;
@@ -1175,8 +1200,33 @@
         if (!event.relatedTarget) pointer.active = false;
       });
 
-      resizeCanvas();
-      requestAnimationFrame(drawFrame);
+      function startBackground() {
+        if (started || document.hidden) return;
+        started = true;
+        resizeCanvas();
+        frameId = requestAnimationFrame(drawFrame);
+      }
+
+      document.addEventListener("visibilitychange", () => {
+        document.documentElement.classList.toggle("page-hidden", document.hidden);
+        if (document.hidden) {
+          cancelAnimationFrame(frameId);
+          frameId = 0;
+          pointer.active = false;
+        } else if (!started) {
+          startBackground();
+        } else if (!frameId) {
+          previousFrame = 0;
+          frameId = requestAnimationFrame(drawFrame);
+        }
+      });
+
+      // Cho giao diện và các link hiển thị trước khi khởi động nền.
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(startBackground, { timeout: 800 });
+      } else {
+        setTimeout(startBackground, 150);
+      }
     })();
 
     /* Tuyết điểm nhẹ: mỗi đợt chỉ có vài bông và cách nhau khá lâu. */
@@ -1250,7 +1300,7 @@
     const CHAM_CONG_01_07_2026 = "https://docs.google.com/spreadsheets/d/1w1QXOhkaxXVktWi5Prrel8blfGkH0f20zJVp3JTyRcg/edit?usp=sharing";
     const CHAM_CONG_01_08_2026 = "https://docs.google.com/spreadsheets/d/1MBUdWsDXPQM0xjPXbkXHQ310U8aAGctiaxGQUepr7J4/edit?usp=sharing";
     const CHAM_CONG_01_09_2026 = "https://docs.google.com/spreadsheets/d/1AFxrR0jwqDKs05Fj46uDsq3y9L3nAcoZ4Eq1sSJFEAw/edit?usp=sharing";
-    const CHAM_CONG_01_10_2026 = "";
+    const CHAM_CONG_01_10_2026 = "https://docs.google.com/spreadsheets/d/1ZgBF1riFFNtaCnk2LpENDrQoWd3TOwi1ayxpi3IYmvQ/edit?usp=sharing";
     const CHAM_CONG_01_11_2026 = "";
     const CHAM_CONG_01_12_2026 = "";
 
@@ -1258,7 +1308,7 @@
     const TIEN_MAT_01_07_2026 = "https://docs.google.com/spreadsheets/d/1DwRZ6SCnyrH4VN8f4aM5qRq9hU2qfW_PJFEFZPRu0J4/edit?usp=drive_link";
     const TIEN_MAT_01_08_2026 = "https://docs.google.com/spreadsheets/d/1IL7Kb4K2hWlClvzh6p4zoq1b4NeFVwfCBhpRLwKItVU/edit?usp=sharing";
     const TIEN_MAT_01_09_2026 = "https://docs.google.com/spreadsheets/d/1mD13QIPlh0epd9CFKfRq2IMtjb84RCyzaWLSxQwV5CI/edit?usp=sharing";
-    const TIEN_MAT_01_10_2026 = "";
+    const TIEN_MAT_01_10_2026 = "https://docs.google.com/spreadsheets/d/1P8qHKzL_eVntFCk1h43EFJYdToOLgASGkHjW2xb0DIk/edit?usp=sharing";
     const TIEN_MAT_01_11_2026 = "";
     const TIEN_MAT_01_12_2026 = "";
 
